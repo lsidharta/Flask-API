@@ -70,16 +70,16 @@ def create_app(test_config=None):
             }
         )
 
-    # @app.route('/books/<int:book_id>')
-    # def retrieve_book(book_id):
-    #   book = Book.query.filter(Book.id == book_id).one_or_none()
-    #   if book is None:
-    #     abort(404)
-    #   else:
-    #     return jsonify({
-    #       'success': True,
-    #       'book': book.format()
-    #     })
+    @app.route('/books/<int:book_id>')
+    def retrieve_book(book_id):
+      book = Book.query.filter(Book.id == book_id).one_or_none()
+      if book is None:
+        abort(404)
+      else:
+        return jsonify({
+          'success': True,
+          'book': book.format()
+        })
 
     @app.route("/books/<int:book_id>", methods=["PATCH"])
     def update_book(book_id):
@@ -188,6 +188,15 @@ def create_app(test_config=None):
 
     @app.errorhandler(400)
     def bad_request(error):
-        return jsonify({"success": False, "error": 400, "message": "bad request"}), 400
+        return (
+            jsonify({"success": False, "error": 400, "message": "bad request"}), 
+            400
+        )
 
+    @app.errorhandler(405)
+    def not_found(error):
+        return (
+            jsonify({"success": False, "error": 405, "message": "method not allowed"}), 
+            405
+        )
     return app
